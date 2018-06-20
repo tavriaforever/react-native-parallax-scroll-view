@@ -69,7 +69,7 @@ class ParallaxScrollView extends Component {
 
 	animatedEvent = Animated.event(
 		[{ nativeEvent: { contentOffset: { y: this.scrollY } } }],
-		{ useNativeDriver: true }
+// 		{ useNativeDriver: true }
 	)
 
 	render() {
@@ -140,7 +140,7 @@ class ParallaxScrollView extends Component {
 						// Using Native Driver greatly optimizes performance
 						onScroll: Animated.event(
 							[{ nativeEvent: { contentOffset: { y: this.scrollY } } }],
-							{ useNativeDriver: true, listener: this._onScroll.bind(this) }
+							{ listener: this._onScroll.bind(this) }
 						)
 						// onScroll: this._onScroll.bind(this)
 					},
@@ -372,22 +372,19 @@ class ParallaxScrollView extends Component {
 		const { viewWidth } = this.state
 		const { scrollY } = this
 		if (renderStickyHeader || renderFixedHeader) {
-			const p = pivotPoint(parallaxHeaderHeight, stickyHeaderHeight)
+			const p = pivotPoint(parallaxHeaderHeight, stickyHeaderHeight);
+		      let height = interpolate(scrollY, {
+			inputRange: [0, stickyHeaderHeight],
+			outputRange: [0, stickyHeaderHeight],
+			extrapolate: 'clamp'
+		      });
 			return (
-				<View
-					style={[
-						styles.stickyHeader,
-						{
-							width: viewWidth,
-							...(stickyHeaderHeight ? { height: stickyHeaderHeight } : null)
-						}
-					]}
-				>
+				<View style={[styles.stickyHeader, { width: viewWidth }]}>
 					{renderStickyHeader
 						? <Animated.View
 							style={{
 								backgroundColor: backgroundColor,
-								height: stickyHeaderHeight,
+								height,
 								opacity: interpolate(scrollY, {
 									inputRange: [0, p],
 									outputRange: [0, 1],
