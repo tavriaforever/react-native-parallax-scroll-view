@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Animated, Dimensions, View, ViewPropTypes } from 'react-native'
+import { Animated, Dimensions, View, ViewPropTypes, Platform } from 'react-native'
 
 const styles = require('./styles')
 
@@ -324,6 +324,16 @@ class ParallaxScrollView extends Component {
 				this.containerHeight = 0;
 			}
 		});
+		
+		// to fix content zIndex on Android
+		if (Platform.OS === 'android') {
+			return (
+				<View>
+					{renderContentBackground()}
+					{children}
+				</View>
+			);
+		}
 
 		return (
 			<View
